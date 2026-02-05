@@ -35,10 +35,14 @@ function ShopContent() {
     const fetchCategories = async () => {
         try {
             const res = await fetch('/api/categories');
+            if (!res.ok) {
+                throw new Error('Failed to fetch categories');
+            }
             const data = await res.json();
-            setCategories(data);
+            setCategories(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error('Error fetching categories:', error);
+            setCategories([]);
         }
     };
 
@@ -63,6 +67,9 @@ function ShopContent() {
             params.append('limit', '12');
 
             const res = await fetch(`/api/products?${params.toString()}`);
+            if (!res.ok) {
+                throw new Error('Failed to fetch products');
+            }
             const data = await res.json();
 
             if (reset) {
@@ -84,6 +91,8 @@ function ShopContent() {
 
         } catch (error) {
             console.error('Error fetching products:', error);
+            // On error, if resetting, clear products. If loading more, just stop.
+            if (reset) setProducts([]);
         } finally {
             setLoading(false);
         }
