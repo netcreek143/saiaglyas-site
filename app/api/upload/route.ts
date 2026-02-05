@@ -15,38 +15,30 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-
-        // create uploads directory if it doesn't exist
-        const relativeUploadDir = '/uploads';
-        const uploadDir = join(process.cwd(), 'public', relativeUploadDir);
-
-        try {
-            await mkdir(uploadDir, { recursive: true });
-        } catch (e) {
-            // ignore if exists
+        // 4MB limit to allow for Base64 overhead within MongoDB 16MB limit
+        if (file.size > 4 * 1024 * 1024) {
+            return NextResponse.json(
+                { error: 'File too large. Max size is 4MB.' },
+                { status: 400 }
+            );
         }
 
-        // Generate unique filename
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, ''); // Sanitize
-        const filename = `${uniqueSuffix}-${originalName}`;
+        const bytes = await file.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        const mimeType = file.type || 'application/octet-stream';
 
-        const path = join(uploadDir, filename);
-
-        await writeFile(path, buffer);
-        console.log(`Saved file to ${path}`);
+        // Convert to Base64 Data URI
+        const base64Url = `data:${mimeType};base64,${buffer.toString('base64')}`;
 
         return NextResponse.json({
             success: true,
-            url: `${relativeUploadDir}/${filename}`
+            url: base64Url
         });
 
     } catch (error) {
-        console.error('Error uploading file:', error);
+        console.error('Error processing file:', error);
         return NextResponse.json(
-            { error: 'Error uploading file' },
+            { error: 'Error processing file' },
             { status: 500 }
         );
     }
