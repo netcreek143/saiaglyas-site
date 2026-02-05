@@ -5,13 +5,13 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("postgresql://neondb_owner:npg_hqD6XT3ylVCb@ep-wandering-night-a163uvoq-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'")
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 // User model for customers and admins
 model User {
-  id        String   @id @default(cuid())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   email     String   @unique
   password  String
   name      String
@@ -32,8 +32,8 @@ enum Role {
 
 // Address model for shipping
 model Address {
-  id          String  @id @default(cuid())
-  userId      String
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String  @db.ObjectId
   fullName    String
   phone       String
   addressLine String
@@ -48,7 +48,7 @@ model Address {
 
 // Category model for product organization
 model Category {
-  id          String    @id @default(cuid())
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   name        String    @unique
   slug        String    @unique
   description String?
@@ -61,12 +61,12 @@ model Category {
 
 // Product model
 model Product {
-  id          String   @id @default(cuid())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   description String
   price       Float
   images      String // JSON array of image URLs
-  categoryId  String
+  categoryId  String @db.ObjectId
   stock       Int      @default(0)
   variants    String? // JSON array of variant options (sizes, colors)
   featured    Boolean  @default(false)
@@ -80,9 +80,9 @@ model Product {
 
 // Order model
 model Order {
-  id              String      @id @default(cuid())
-  userId          String
-  addressId       String
+  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String      @db.ObjectId
+  addressId       String      @db.ObjectId
   items           String // JSON array of cart items
   subtotal        Float
   shipping        Float       @default(0)
@@ -110,9 +110,9 @@ enum OrderStatus {
 
 // OrderItem model for detailed order tracking
 model OrderItem {
-  id        String   @id @default(cuid())
-  orderId   String
-  productId String
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String   @db.ObjectId
+  productId String   @db.ObjectId
   quantity  Int
   price     Float
   variant   String? // Selected variant (size/color)
@@ -124,9 +124,9 @@ model OrderItem {
 
 // Wishlist model
 model Wishlist {
-  id        String   @id @default(cuid())
-  userId    String
-  productId String
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  productId String   @db.ObjectId
   createdAt DateTime @default(now())
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)

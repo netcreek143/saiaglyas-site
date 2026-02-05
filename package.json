@@ -12,8 +12,8 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.9.1",
-    "@prisma/client": "^6.2.1",
+    "@hookform/resolvers": "^3.10.0",
+    "@prisma/client": "^6.19.2",
     "bcryptjs": "^2.4.3",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.563.0",
