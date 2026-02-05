@@ -39,7 +39,7 @@ export default async function HomePage() {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative h-[500px] md:h-[600px] lg:h-[600px] flex items-center justify-center overflow-hidden bg-gradient-to-r from-pink-50 to-purple-50">
-        <div className="absolute inset-0 bg-[url('/images/hero-banner.jpg')] bg-cover bg-center opacity-20"></div>
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1549416878-b9ca95e9f6f5?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-20"></div>
 
         <div className="relative z-10 container mx-auto px-4 text-center">
           <div className="animate-fade-in flex flex-col items-center">
